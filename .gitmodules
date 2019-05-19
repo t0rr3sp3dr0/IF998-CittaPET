@@ -1,0 +1,12 @@
+[submodule "webApplication"]
+	path = webApplication
+	url = git@github.com:t0rr3sp3dr0/IF998-CittaPET-WebApplication
+[submodule "webService"]
+	path = webService
+	url = git@github.com:t0rr3sp3dr0/IF998-CittaPET-WebService
+[submodule "mapService"]
+	path = mapService
+	url = git@github.com:t0rr3sp3dr0/IF998-CittaPET-MapService
+[submodule "streamService"]
+	path = streamService
+	url = git@github.com:t0rr3sp3dr0/IF998-CittaPET-StreamService
