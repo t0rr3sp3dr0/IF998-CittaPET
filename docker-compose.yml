@@ -1,0 +1,79 @@
+version: '3'
+services:
+  map-service:
+    build: './mapService'
+    links:
+      - queue
+    environment:
+      - QUEUE_ADDR=queue
+      - QUEUE_PORT=5672
+      - QUEUE_USER=guest
+      - QUEUE_PASS=guest
+    ports:
+      - '50051:50051'
+    networks:
+      - default
+    restart: on-failure
+  stream-service:
+    build: './streamService'
+    links:
+      - database
+      - queue
+    environment:
+      - DB_ADDR=database
+      - DB_PORT=27017
+      - DB_NAME=cittapet
+      - QUEUE_ADDR=queue
+      - QUEUE_PORT=5672
+      - QUEUE_USER=guest
+      - QUEUE_PASS=guest
+    networks:
+      - default
+    restart: on-failure
+  web-service:
+    build: './webService'
+    links:
+      - database
+      - map-service
+    environment:
+      - DB_ADDR=database
+      - DB_PORT=27017
+      - DB_NAME=cittapet
+      - MAP_ADDR=map-service
+      - MAP_PORT=50051
+    ports:
+      - '8080:80'
+    networks:
+      - default
+    restart: on-failure
+  database:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+      - '28017:28017'
+    networks:
+      - default
+    volumes:
+      - database:/data/db
+    restart: on-failure
+  queue:
+    image: rabbitmq:management
+    environment:
+      - RABBITMQ_HIPE_COMPILE=1
+    ports:
+      - '4369:4369'
+      - '5671:5671'
+      - '5672:5672'
+      - '15671:15671'
+      - '15672:15672'
+      - '25672:25672'
+    networks:
+      - default
+    volumes:
+      - queue:/var/lib/rabbitmq
+    restart: on-failure
+networks:
+  default:
+volumes:
+  database:
+  queue:
